@@ -26,7 +26,7 @@ For managed code, the API is wrapped up in a TraceListener derived class, Proces
 The tracing statements are reported as Profiling Events so to see them, add ensure the "Show Profiling Events" button is selected (the last one on the toolbar). These events are of Operation type "Debug Output Profiling".
 
 The following screen shot shows the tracing of the two sample programs with the filter set to only show tracing events.
-![](.\ProcMonShowingTracing.jpeg)
+![](ProcMonShowingTracing.jpeg)
 
 ## But I Want to See All OutputDebug/Debug.WriteLine calls in Process Monitor ##
 That's not going to happen. When Mark and I discussed adding tracing to Process Monitor, we talked about combining both Process Monitor and Debug View. It was far easier to add the custom interface presented here that to do the major engineering effort to combine the tools. Remember, shipping is a feature!
