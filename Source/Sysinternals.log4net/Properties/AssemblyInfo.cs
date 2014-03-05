@@ -5,13 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-using log4net.Config;
-
-[assembly: AssemblyTitle("ManagedTest")]
+[assembly: AssemblyTitle("Sysinternals.log4net")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ManagedTest")]
+[assembly: AssemblyProduct("Sysinternals.log4net")]
 [assembly: AssemblyCopyright("Copyright ©  2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -22,7 +20,7 @@ using log4net.Config;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("e41f259c-3367-451c-a0cf-a92809991f37")]
+[assembly: Guid("d8560003-f6b2-40b4-989f-ff24d28a8eb4")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -36,6 +34,3 @@ using log4net.Config;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
-
-// Read the log4net config from the app.config
-[assembly:XmlConfigurator(Watch = false)]

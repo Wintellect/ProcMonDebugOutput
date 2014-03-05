@@ -36,10 +36,13 @@ namespace Sysinternals.Debug
         /// <param name="message">
         /// The message to display.
         /// </param>
+        /// <param name="args">
+        /// The formatting arguments for the message
+        /// </param>
         /// <returns>
         /// True if the trace succeeded, false otherwise.
         /// </returns>
-        public static bool ProcMonDebugOutput(string message)
+        public static bool ProcMonDebugOutput(string message, params object[] args)
         {
             if (false == lookedUpProcessType)
             {
@@ -56,13 +59,14 @@ namespace Sysinternals.Debug
             bool returnValue = false;
             try
             {
+                string renderedMessage = string.Format(message, args);
                 if (true == is64BitProcess)
                 {
-                    returnValue = ProcMonDebugOutputx64(message);
+                    returnValue = ProcMonDebugOutputx64(renderedMessage);
                 }
                 else
                 {
-                    returnValue = ProcMonDebugOutputWin32(message);
+                    returnValue = ProcMonDebugOutputWin32(renderedMessage);
                 }
             }
             catch (EntryPointNotFoundException notFoundException)
