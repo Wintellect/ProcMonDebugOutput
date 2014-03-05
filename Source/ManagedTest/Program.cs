@@ -16,12 +16,13 @@ namespace ManagedTest
     {
         static void Main(string[] args)
         {
+            /*
             Hierarchy hierarchy = (Hierarchy)LogManager.GetRepository();
             hierarchy.Root.AddAppender(new ColoredConsoleAppender());
             hierarchy.Root.AddAppender(new ProcMonAppender());
             hierarchy.Root.Level = Level.Debug;
             hierarchy.Configured = true;
-
+            */
             ILog _logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
             Debug.Listeners.Remove("Default");
 
