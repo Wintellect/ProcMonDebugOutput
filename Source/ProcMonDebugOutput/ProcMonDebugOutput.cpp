@@ -18,10 +18,8 @@ HANDLE OpenProcessMonitorLogger(void)
         // I'm attempting the open every time because the user could start 
         // Process Monitor after their process.
         g_hDevice = ::CreateFile(L"\\\\.\\Global\\ProcmonDebugLogger",
-                                 GENERIC_READ | GENERIC_WRITE,
-                                 FILE_SHARE_READ |
-                                 FILE_SHARE_WRITE |
-                                 FILE_SHARE_DELETE,
+                                 GENERIC_WRITE,
+                                 FILE_SHARE_WRITE,
                                  NULL,
                                  OPEN_EXISTING,
                                  FILE_ATTRIBUTE_NORMAL,
