@@ -8,11 +8,13 @@
 //      - Moved to VS 2013 and .NET 4.5.1
 //////////////////////////////////////////////////////////////////////////////*/
 
+using System.Text;
+using Microsoft.Win32.SafeHandles;
+
 namespace Sysinternals.Debug
 {
     using System;
     using System.Diagnostics;
-    using System.Reflection;
     using System.Runtime.InteropServices;
 
     /// <summary>
@@ -20,15 +22,64 @@ namespace Sysinternals.Debug
     /// </summary>
     internal static class NativeMethods
     {
-        /// <summary>
-        /// Flag to check if we've already done the process lookup.
-        /// </summary>
-        private static bool lookedUpProcessType;
+        // Constants to represent C preprocessor macros for PInvokes
+        const uint GENERIC_WRITE = 0x40000000;
+        const uint OPEN_EXISTING = 3;
+        const uint FILE_WRITE_ACCESS = 0x0002;
+        const uint FILE_SHARE_WRITE = 0x00000002;
+        const uint FILE_ATTRIBUTE_NORMAL = 0x00000080;
+        const uint METHOD_BUFFERED = 0;
+
+        // Procmon Constants 
+        const uint FILE_DEVICE_PROCMON_LOG = 0x00009535;
+        const string PROCMON_DEBUGGER_HANDLER = "\\\\.\\Global\\ProcmonDebugLogger";
 
         /// <summary>
-        /// True if the process is 64-bit.
+        /// The handle to the procmon log device.
         /// </summary>
-        private static bool is64BitProcess;
+        private static SafeFileHandle hProcMon;
+
+        /// <summary>
+        /// Get the IO Control code for the ProcMon log.
+        /// </summary>
+        private static uint IOCTL_EXTERNAL_LOG_DEBUGOUT { get { return CTL_CODE(); } }
+
+        /// <seealso href="http://msdn.microsoft.com/en-us/library/windows/hardware/ff543023(v=vs.85).aspx"/>
+        private static uint CTL_CODE(
+            uint DeviceType = FILE_DEVICE_PROCMON_LOG,
+            uint Function = 0x81,
+            uint Method = METHOD_BUFFERED,
+            uint Access = FILE_WRITE_ACCESS)
+        {
+            return ((DeviceType << 16) | (Access << 14) | (Function << 2) | Method);
+        }
+
+        /// <remarks>This is only used for opening the procmon log handle, hence the default parameters.</remarks>
+        /// <seealso href="http://msdn.microsoft.com/en-us/library/windows/desktop/aa363858(v=vs.85).aspx"/>
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        private static extern SafeFileHandle CreateFile(
+            string lpFileName = PROCMON_DEBUGGER_HANDLER,
+            uint dwDesiredAccess = GENERIC_WRITE,
+            uint dwShareMode = FILE_SHARE_WRITE,
+            IntPtr lpSecurityAttributes = default(IntPtr),
+            uint dwCreationDisposition = OPEN_EXISTING,
+            uint dwFlagsAndAttributes = FILE_ATTRIBUTE_NORMAL,
+            IntPtr hTemplateFile = default(IntPtr));
+
+        [DllImport("kernel32.dll", ExactSpelling = true, SetLastError = true, CharSet = CharSet.Auto)]
+        private static extern bool DeviceIoControl(
+            SafeFileHandle hDevice, uint dwIoControlCode,
+            StringBuilder lpInBuffer, uint nInBufferSize,
+            IntPtr lpOutBuffer, uint nOutBufferSize,
+            out uint lpBytesReturned, IntPtr lpOverlapped);
+
+        static NativeMethods()
+        {
+            AppDomain.CurrentDomain.ProcessExit += (sender, args) =>
+            {
+                if (!hProcMon.IsInvalid) hProcMon.Close();
+            };
+        }
 
         /// <summary>
         /// Does the actual tracing to Process Monitor.
@@ -36,34 +87,28 @@ namespace Sysinternals.Debug
         /// <param name="message">
         /// The message to display.
         /// </param>
+        /// <param name="args">
+        /// The formatting arguments for the message
+        /// </param>
         /// <returns>
         /// True if the trace succeeded, false otherwise.
         /// </returns>
-        public static bool ProcMonDebugOutput(string message)
+        public static bool ProcMonDebugOutput(string message, params object[] args)
         {
-            if (false == lookedUpProcessType)
-            {
-                lookedUpProcessType = true;
-
-                Assembly mscorlibAssem = Assembly.GetAssembly(typeof(object));
-                Module[] mods = mscorlibAssem.GetModules();
-                PortableExecutableKinds peK;
-                ImageFileMachine ifn;
-                mods[0].GetPEKind(out peK, out ifn);
-                is64BitProcess = ImageFileMachine.I386 != ifn;
-            }
-
             bool returnValue = false;
             try
             {
-                if (true == is64BitProcess)
+                StringBuilder renderedMessage = new StringBuilder(); 
+                renderedMessage.AppendFormat(message, args);
+                uint outLen;
+                if (hProcMon == null || hProcMon.IsInvalid)
                 {
-                    returnValue = ProcMonDebugOutputx64(message);
+                    hProcMon = CreateFile();
                 }
-                else
-                {
-                    returnValue = ProcMonDebugOutputWin32(message);
-                }
+                DeviceIoControl(
+                    hProcMon, IOCTL_EXTERNAL_LOG_DEBUGOUT,
+                    renderedMessage, (uint)(message.Length * Marshal.SizeOf(typeof(char))),
+                    IntPtr.Zero, 0, out outLen, IntPtr.Zero);
             }
             catch (EntryPointNotFoundException notFoundException)
             {
@@ -75,21 +120,5 @@ namespace Sysinternals.Debug
 
             return returnValue;
         }
-
-        [DllImport("ProcMonDebugOutputx64.dll",
-                   CharSet = CharSet.Unicode,
-                   EntryPoint = "ProcMonDebugOutput",
-                   SetLastError = true,
-                   CallingConvention = CallingConvention.StdCall)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool ProcMonDebugOutputx64(string lpOutput);
-
-        [DllImport("ProcMonDebugOutputWin32.dll",
-                   CharSet = CharSet.Unicode,
-                   EntryPoint = "ProcMonDebugOutput",
-                   SetLastError = true,
-                   CallingConvention = CallingConvention.StdCall)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool ProcMonDebugOutputWin32(string lpOutput);
     }
 }

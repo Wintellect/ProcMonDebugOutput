@@ -90,6 +90,12 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sysinternals.Debug\Sysinternals.Debug.csproj">
+      <Project>{fb1d522e-1acb-49dd-93d4-123e6ea13aed}</Project>
+      <Name>Sysinternals.Debug</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
