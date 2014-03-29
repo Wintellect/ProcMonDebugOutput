@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ProcMonDebugOutput", "ProcMonDebugOutput\ProcMonDebugOutput.vcxproj", "{67431913-19A9-4C9E-8DE4-C56939F8324B}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NativeTest", "NativeTest\NativeTest.vcxproj", "{C2944A24-633E-4006-8000-CA00A47737DE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{67431913-19A9-4C9E-8DE4-C56939F8324B} = {67431913-19A9-4C9E-8DE4-C56939F8324B}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sysinternals.Debug", "Sysinternals.Debug\Sysinternals.Debug.csproj", "{FB1D522E-1ACB-49DD-93D4-123E6EA13AED}"
 EndProject

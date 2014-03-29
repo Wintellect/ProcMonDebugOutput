@@ -23,7 +23,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <RunCodeAnalysis>true</RunCodeAnalysis>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>AllCodeAnalysisRulesAsErrors.ruleset</CodeAnalysisRuleSet>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DocumentationFile>..\Debugx64\Sysinternals.Debug.XML</DocumentationFile>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
@@ -36,7 +36,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <RunCodeAnalysis>true</RunCodeAnalysis>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>AllCodeAnalysisRulesAsErrors.ruleset</CodeAnalysisRuleSet>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DocumentationFile>..\Releasex64\Sysinternals.Debug.XML</DocumentationFile>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
@@ -53,7 +53,7 @@
     <Compile Include="ProcessMonitorTraceListerner.cs" />
   </ItemGroup>
   <ItemGroup>
-    <CodeAnalysisDictionary Include="Dictionary.xml" />
+    <CodeAnalysisDictionary Include="CodeAnalysisDictionary.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
