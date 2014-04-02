@@ -35,7 +35,7 @@ extern "C" {
     //  Sends a string to Process Monitor for display.
     //
     // Parameters:
-    //  lpOutputString
+    //  pszOutputString
     //      The null-terminated wide character string to be displayed.
     //
     // Return Values:
@@ -45,13 +45,14 @@ extern "C" {
     //          exact failure.
     //
     // Last Error Codes:
-    //  ERROR_INVALID_PARAMETER - The lpOutputString parameter is NULL.
+    //  ERROR_INVALID_PARAMETER - The pszOutputString parameter is NULL.
     //  ERROR_WRITE_FAULT       - The Process Monitor driver is loaded but the
     //                            Process Monitor user mode portion is not running.
     //  ERROR_BAD_DRIVER        - The Process Monitor driver is not loaded.
     //////////////////////////////////////////////////////////////////////////////*/
-    PROCMONDEBUGOUTPUT_DLLINTERFACE __success(return == TRUE)
-        BOOL __stdcall ProcMonDebugOutput(__in LPCWSTR lpOutputString);
+    PROCMONDEBUGOUTPUT_DLLINTERFACE 
+        _Success_(return == TRUE)
+        BOOL __stdcall ProcMonDebugOutput(_In_z_ LPCWSTR pszOutputString);
 
 #ifdef __cplusplus
 }
