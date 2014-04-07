@@ -5,7 +5,7 @@
 // - April 1, 2010 - Version 1.0 - John Robbins/Wintellect
 //      - Initial release
 // - March 1, 2014 - Version 1.1 - John Robbins/Wintellect
-//      - Fixed an issue in DLL main where the handle could get close too 
+//      - Fixed an issue in DLL main where the handle could get close too
 //        soon.
 //      - Moved the project to VS 2013.
 //
@@ -50,7 +50,7 @@ extern "C" {
     //                            Process Monitor user mode portion is not running.
     //  ERROR_BAD_DRIVER        - The Process Monitor driver is not loaded.
     //////////////////////////////////////////////////////////////////////////////*/
-    PROCMONDEBUGOUTPUT_DLLINTERFACE 
+    PROCMONDEBUGOUTPUT_DLLINTERFACE
         _Success_(return == TRUE)
         BOOL __stdcall ProcMonDebugOutput(_In_z_ LPCWSTR pszOutputString);
 

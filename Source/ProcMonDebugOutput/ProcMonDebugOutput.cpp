@@ -2,7 +2,6 @@
 #include "stdafx.h"
 #include "ProcMonDebugOutput.h"
 
-
 #define FILE_DEVICE_PROCMON_LOG     0x00009535
 #define IOCTL_EXTERNAL_LOG_DEBUGOUT	(ULONG) CTL_CODE(FILE_DEVICE_PROCMON_LOG ,\
                                                      0x81                    ,\
@@ -12,41 +11,40 @@
 // The global file handle to the Process Monitor device.
 static HANDLE g_hDevice = INVALID_HANDLE_VALUE;
 
-
 // Anonymous namespace for private helpers
 namespace {
 
-HANDLE OpenProcessMonitorLogger()
-{
-    if (INVALID_HANDLE_VALUE == g_hDevice)
+    HANDLE OpenProcessMonitorLogger()
     {
-        // I'm attempting the open every time because the user could start 
-        // Process Monitor after their process.
-        g_hDevice = ::CreateFile(L"\\\\.\\Global\\ProcmonDebugLogger",
-                                 GENERIC_WRITE,
-                                 FILE_SHARE_WRITE,
-                                 nullptr,
-                                 OPEN_EXISTING,
-                                 FILE_ATTRIBUTE_NORMAL,
-                                 nullptr);
+        if (INVALID_HANDLE_VALUE == g_hDevice)
+        {
+            // I'm attempting the open every time because the user could start 
+            // Process Monitor after their process.
+            g_hDevice = ::CreateFile(L"\\\\.\\Global\\ProcmonDebugLogger",
+                                     GENERIC_WRITE,
+                                     FILE_SHARE_WRITE,
+                                     nullptr,
+                                     OPEN_EXISTING,
+                                     FILE_ATTRIBUTE_NORMAL,
+                                     nullptr);
+        }
+        return g_hDevice;
     }
-    return g_hDevice;
-}
 
-void CloseProcessMonitorLogger()
-{
-    if (INVALID_HANDLE_VALUE != g_hDevice)
+    void CloseProcessMonitorLogger()
     {
-        ::CloseHandle(g_hDevice);
-        g_hDevice = INVALID_HANDLE_VALUE;
+        if (INVALID_HANDLE_VALUE != g_hDevice)
+        {
+            ::CloseHandle(g_hDevice);
+            g_hDevice = INVALID_HANDLE_VALUE;
+        }
     }
-}
 
-// Used to pass strings to legacy C APIs expecting a raw void* pointer.
-inline void* StringToPVoid(PCWSTR psz)
-{
-    return reinterpret_cast<void *>(const_cast<wchar_t*>(psz));
-}
+    // Used to pass strings to legacy C APIs expecting a raw void* pointer.
+    inline void* StringToPVoid(PCWSTR psz)
+    {
+        return reinterpret_cast<void *>(const_cast<wchar_t*>(psz));
+    }
 
 } // anonymous namespace
 
@@ -66,7 +64,7 @@ BOOL __stdcall ProcMonDebugOutput(_In_z_ LPCWSTR pszOutputString)
         HANDLE hProcMon = OpenProcessMonitorLogger();
         if (INVALID_HANDLE_VALUE != hProcMon)
         {
-            DWORD iLen = static_cast<DWORD>( wcslen(pszOutputString) * sizeof (WCHAR) );
+            DWORD iLen = static_cast<DWORD>(wcslen(pszOutputString) * sizeof (WCHAR));
             DWORD iOutLen = 0;
             bRet = ::DeviceIoControl(hProcMon,
                                      IOCTL_EXTERNAL_LOG_DEBUGOUT,
