@@ -142,7 +142,7 @@ namespace Sysinternals.Debug
             returnValue = DeviceIoControl(hProcMon, 
                                           IOCTL_EXTERNAL_LOG_DEBUGOUT,
                                           renderedMessage, 
-                                          (uint)(message.Length * sizeof(System.Char)),
+                                          (uint)(renderedMessage.Length * sizeof(System.Char)),
                                           IntPtr.Zero, 
                                           0, 
                                           out outLen, 
